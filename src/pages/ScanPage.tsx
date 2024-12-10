@@ -4,44 +4,92 @@ import { ChevronLeft, Plus } from 'lucide-react';
 
 const ScanPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Function to set up the camera
   const setupCamera = async () => {
     try {
-      console.log("Requesting camera access...");
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
-      console.log("Camera access granted.");
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        console.log("Stream assigned to video element:", stream);
-        setHasPermission(true);
-        setErrorMessage(null); // Clear any previous error messages
-        videoRef.current.play(); // Explicitly call play()
-      }
-    } catch (err) {
-      console.error("Error accessing camera:", err);
-      if (err.name === 'NotAllowedError') {
-        setErrorMessage("Camera access denied. Please allow camera access in your browser settings.");
-      } else if (err.name === 'NotFoundError') {
-        setErrorMessage("No camera found. Please connect a camera.");
+      setIsLoading(true);
+      setErrorMessage(null);
+      console.log("1. Starting camera setup...");
+
+      const constraints = {
+        video: { 
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+      
+      console.log("2. Requesting media with constraints:", constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log("3. Got media stream:", stream.getTracks());
+
+      // Store the stream in ref for later use
+      streamRef.current = stream;
+      setHasPermission(true);
+      
+    } catch (err: unknown) {
+      console.error("Camera setup error:", err);
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') {
+          setErrorMessage("Camera access denied. Please allow camera access in your browser settings.");
+        } else if (err.name === 'NotFoundError') {
+          setErrorMessage("No camera found. Please connect a camera.");
+        } else if (err.name === 'NotReadableError') {
+          setErrorMessage("Camera is in use by another application.");
+        } else {
+          setErrorMessage(`Camera error: ${err.message}`);
+        }
       } else {
         setErrorMessage("An unknown error occurred while trying to access the camera.");
       }
       setHasPermission(false);
     }
+    setIsLoading(false);
   };
 
+  // Add a new effect to handle video element setup
   useEffect(() => {
+    if (hasPermission && videoRef.current && streamRef.current) {
+      console.log("4. Setting up video element");
+      videoRef.current.srcObject = streamRef.current;
+      
+      videoRef.current.onloadeddata = () => {
+        console.log("5. Video data loaded");
+        videoRef.current?.play()
+          .then(() => {
+            console.log("6. Video playing successfully");
+          })
+          .catch((err) => {
+            console.error("Error playing video:", err);
+            setErrorMessage("Failed to play video");
+            setHasPermission(false);
+          });
+      };
+    }
+  }, [hasPermission, videoRef.current]);
+
+  useEffect(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setErrorMessage("Your browser doesn't support camera access");
+      setIsLoading(false);
+      return;
+    }
+
     setupCamera();
 
     return () => {
-      if (videoRef.current?.srcObject) {
-        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-        tracks.forEach(track => track.stop());
+      console.log("Cleaning up camera...");
+      if (streamRef.current) {
+        const tracks = streamRef.current.getTracks();
+        tracks.forEach(track => {
+          track.stop();
+          console.log("Track stopped:", track.label);
+        });
+        streamRef.current = null;
       }
     };
   }, []);
@@ -57,21 +105,27 @@ const ScanPage: React.FC = () => {
         </Link>
 
         <div className="absolute inset-0">
-          {hasPermission ? (
+          {isLoading ? (
+            <div className="h-full w-full flex items-center justify-center bg-gray-900 text-white">
+              <p>Initializing camera...</p>
+            </div>
+          ) : hasPermission ? (
             <video
               ref={videoRef}
               autoPlay
               playsInline
-              muted // Ensure video is muted for autoplay
-              controls // Add controls temporarily for debugging
+              muted
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="h-full w-full flex items-center justify-center bg-gray-900 text-white">
+            <div className="h-full w-full flex flex-col items-center justify-center bg-gray-900 text-white">
               {errorMessage ? (
                 <>
-                  <p>{errorMessage}</p>
-                  <button onClick={setupCamera} className="mt-4 bg-blue-500 text-white p-2 rounded">
+                  <p className="text-center px-4">{errorMessage}</p>
+                  <button 
+                    onClick={setupCamera} 
+                    className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                  >
                     Retry Access
                   </button>
                 </>
