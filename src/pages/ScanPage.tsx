@@ -152,7 +152,7 @@ const ScanPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm rounded-t-2xl">
+        <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm rounded-t-2xl z-10">
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gray-100 rounded-lg">
@@ -163,8 +163,8 @@ const ScanPage: React.FC = () => {
                 />
               </div>
               <div>
-                <h3 className="font-medium">Smart Watch</h3>
                 <p className="text-sm text-gray-500">Arnotts</p>
+                <h3 className="font-medium">Smart Watch</h3>
               </div>
             </div>
             <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
