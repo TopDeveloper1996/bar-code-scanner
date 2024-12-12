@@ -4,11 +4,14 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
-import ScanPage from './pages/ScanPage';
+// import ScanPage from './pages/ScanPage';
 import StockPage from './pages/StockPage';
 import HistoryPage from './pages/HistoryPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ExportPage from './pages/ExportPage';
+import BarcodeScanPage from './pages/BarcodeScanPage'
+import StockList from './components/StockList';
+import ElectricalStockList from './components/ElectricalStockList';
 
 function App() {
   return (
@@ -17,8 +20,10 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/scan" element={<ScanPage />} />
+            <Route path="/scan" element={<BarcodeScanPage />} />
+            {/* <Route path="/barcodescan" element={<BarcodeScanPage />} /> */}
             <Route path="/stock" element={<StockPage />} />
+            <Route path="/stock/electrical" element={<ElectricalStockList />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/export" element={<ExportPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />

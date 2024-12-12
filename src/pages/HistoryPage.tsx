@@ -1,7 +1,6 @@
-import React from 'react';
-import { Plus, Minus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Minus, ChevronLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
 
 const recentScans = [
   {
@@ -9,7 +8,7 @@ const recentScans = [
     name: 'Silk Sundress',
     itemRef: 'PT234-C5878-5',
     stock: 115,
-    image: '/placeholder.svg',
+    image: '/watch.png',
     quantity: 1,
     brand: 'Arnotts'
   },
@@ -18,7 +17,7 @@ const recentScans = [
     name: 'Smart Goggles',
     itemRef: 'E46-T68',
     stock: 35,
-    image: '/placeholder.svg',
+    image: '/watch.png',
     quantity: 1,
     brand: 'Arnotts'
   },
@@ -27,22 +26,83 @@ const recentScans = [
     name: 'Chandelier',
     itemRef: '10744D-5642Z',
     stock: 5,
-    image: '/placeholder.svg',
+    image: '/watch.png',
     quantity: 1,
     brand: 'Arnotts'
   }
 ];
 
+const UpdateModal: React.FC<{ isOpen: boolean; onClose: () => void; count: number }> = ({ 
+  isOpen, 
+  onClose,
+  count 
+}) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
+  if (!isOpen && !isAnimating) return null;
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) {
+      setIsAnimating(false);
+    }
+  };
+
+  return (
+    <div 
+      className={`fixed inset-0 bg-black/75 flex items-center justify-center z-50 transition-opacity duration-300
+        ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+      onClick={onClose}
+    >
+      <div 
+        className={`bg-white rounded-2xl w-[75%] max-w-md p-6 relative transition-all duration-300
+          ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+        onClick={e => e.stopPropagation()}
+        onTransitionEnd={handleAnimationEnd}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+
+        <div className="flex flex-col items-center text-center gap-8 p-8">
+          <h2 className={`text-xl transition-transform duration-300 delay-150
+            ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
+          >
+            <span className="text-blue-500">{count}</span> items updated successfully!
+          </h2>
+          
+          <div className={`w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center
+            transition-all duration-300 delay-300
+            ${isOpen ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}
+          >
+            <div className="w-8 h-8 text-blue-500">✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const HistoryPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="flex-1 px-5 md:px-8 py-6">
         <div className="flex items-center gap-2 mb-6">
           <Link to="/" className="text-blue-500">
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-10 w-10 bg-[#eeeeee]/70 p-2 rounded-lg" />
           </Link>
-          <h1 className="text-2xl font-semibold">Recent Scans</h1>
         </div>
+        <h1 className="text-2xl font-semibold mb-4">Recent Scans</h1>
         <div className="space-y-4 mb-8">
           {recentScans.map((item) => (
             <ScannedItem key={item.id} item={item} />
@@ -54,10 +114,19 @@ const HistoryPage: React.FC = () => {
           <span className="text-blue-500 text-xl font-semibold">7</span>
         </div>
 
-        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6 rounded-xl">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6 rounded-xl"
+        >
           Update
         </button>
       </div>
+
+      <UpdateModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        count={7}
+      />
     </div>
   );
 };

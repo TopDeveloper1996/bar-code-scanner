@@ -46,10 +46,10 @@ const NotificationsPage: React.FC = () => {
       <div className="flex-1 px-5 md:px-8 py-6">
         <div className="flex items-center gap-2 mb-6">
           <Link to="/" className="text-blue-500">
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-10 w-10 bg-[#eeeeee]/70 p-2 rounded-lg" />
           </Link>
-          <h1 className="text-2xl font-semibold">Notifications</h1>
         </div>
+        <h1 className="text-2xl font-semibold mb-4">Notifications</h1>
 
         <div className="space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
           {Object.entries(

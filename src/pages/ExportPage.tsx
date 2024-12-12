@@ -5,16 +5,16 @@ import { Link } from 'react-router-dom';
 export default function ExportPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            <div className="flex-1 px-5 md:px-8 py-6">
+            <div className="px-5 py-6">
                 <div className="flex items-center gap-2 mb-6">
                     <Link to="/" className="text-blue-500">
-                        <ChevronLeft className="h-6 w-6" />
+                        <ChevronLeft className="h-10 w-10 bg-[#eeeeee]/70 p-2 rounded-lg" />
                     </Link>
-                    <h1 className="text-2xl font-semibold">Recent Scans</h1>
                 </div>
+                <h1 className="text-2xl font-semibold mb-4">Export Data</h1>
 
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-                    <DateOption label="Today" />
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    <DateOption label="Today" className="col-span-2 md:col-span-1" />
                     <DateOption label="This Week" />
                     <DateOption label="This Month" />
                 </div>
@@ -42,9 +42,9 @@ export default function ExportPage() {
     )
 }
 
-function DateOption({ label }: { label: string }) {
+function DateOption({ label, className = '' }: { label: string, className?: string }) {
     return (
-        <div className="bg-gray-50 rounded-xl p-4 flex flex-col items-center">
+        <div className={`bg-gray-50 rounded-xl p-4 flex flex-col items-center ${className}`}>
             <Calendar className="h-6 w-6 text-blue-500 mb-2" />
             <span className="text-sm">{label}</span>
         </div>

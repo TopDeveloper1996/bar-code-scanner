@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+@keyframes bg-scan {
+  0% { height: 0; }
+  100% { height: 95%; }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
+
+.animate-bg-scan {
+  animation: bg-scan 3s linear infinite;
+}

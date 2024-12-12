@@ -30,6 +30,14 @@ const HomePage: React.FC = () => {
               iconBgColor="bg-[#E8EBFF]"
               href="/scan"
             />
+            {/* <DashboardCard
+              title="Scan barcode"
+              description="Scanned 233"
+              icon={<ScanIcon className="h-6 w-6 text-[#6B7CFF]" />}
+              bgColor="bg-[#11F9FE]"
+              iconBgColor="bg-[#E8EBFF]"
+              href="/barcodescan"
+            /> */}
             <DashboardCard
               title="Export Data"
               description="3 downloaded files"
