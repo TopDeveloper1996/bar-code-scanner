@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Minus, ChevronLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useScanHistory } from '../context/ScanHistoryContext';
+import { ScannedProduct } from '../context/ScanHistoryContext';
 
 const UpdateModal: React.FC<{ isOpen: boolean; onClose: () => void; count: number }> = ({ 
   isOpen, 
@@ -103,28 +104,18 @@ const HistoryPage: React.FC = () => {
   );
 };
 
-const ScannedItem: React.FC<{ item: typeof recentScans[0] }> = ({ item }) => {
+const ScannedItem: React.FC<{ item: ScannedProduct }> = ({ item }) => {
   return (
     <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-4">
       <img
         src={item.image}
-        alt={item.name}
+        alt={item.title}
         className="w-16 h-16 object-cover rounded-xl"
       />
       <div className="flex-1">
         <p className="text-sm text-gray-500">{item.brand}</p>
-        <h3 className="font-medium">{item.name}</h3>
-        <p className="text-xs text-gray-400">Item Ref: {item.itemRef}</p>
-        <p className="text-xs text-blue-500">{item.stock} items in stock</p>
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="text-gray-400">
-          <Minus className="h-4 w-4" />
-        </button>
-        <span className="text-sm">{item.quantity}</span>
-        <button className="text-blue-500">
-          <Plus className="h-4 w-4" />
-        </button>
+        <h3 className="font-medium">{item.title}</h3>
+        <p className="text-xs text-gray-400">Scanned: {item.timestamp.toLocaleString()}</p>
       </div>
     </div>
   );
