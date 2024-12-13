@@ -13,6 +13,7 @@ import ElectricalStockList from './components/ElectricalStockList';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { ScanHistoryProvider } from './context/ScanHistoryContext';
+import CategoryDetailPage from './pages/CategoryDetailPage';
 
 function App() {
   return (
@@ -27,10 +28,11 @@ function App() {
               <Route path="/scan" element={<BarcodeScanPage />} />
               {/* <Route path="/barcodescan" element={<BarcodeScanPage />} /> */}
               <Route path="/stock" element={<StockPage />} />
-              <Route path="/stock/electrical" element={<ElectricalStockList />} />
+              {/* <Route path="/stock/electrical" element={<ElectricalStockList />} /> */}
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/export" element={<ExportPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/stock/:category" element={<CategoryDetailPage />} />
             </Routes>
           </Layout>
         </Router>

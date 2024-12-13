@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ function BarcodeScanPage() {
   const [data, setData] = useState<string | null>(null);
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { addToHistory } = useScanHistory();
+  const { addToScanHistory } = useScanHistory();
 
   const resetScanner = () => {
     setData(null);
@@ -27,11 +27,14 @@ function BarcodeScanPage() {
   const handleAddItem = () => {
     if (productInfo && data) {
       // Add to scan history
-      addToHistory({
+      addToScanHistory({
         barcode: data,
         title: productInfo.title,
         brand: productInfo.brand,
-        image: productInfo.image
+        image: productInfo.image,
+        category: productInfo.category,
+        description: productInfo.description,
+        timestamp: new Date()
       });
       
       // Reset scanner for next scan
@@ -115,7 +118,7 @@ function BarcodeScanPage() {
             </div>
           </div>
           <button 
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50"
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50 disabled:bg-blue-500 disabled:cursor-not-allowed"
             onClick={handleAddItem}
             disabled={!productInfo}
           >

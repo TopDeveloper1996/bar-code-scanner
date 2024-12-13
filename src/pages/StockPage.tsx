@@ -1,93 +1,91 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { fetchItems } from '../store/slices/itemsSlice';
-import { RootState, AppDispatch } from '../store/store';
+import CategoryItem from '../components/CategoryItem';
 
-const categories = [
-  { name: 'Home', items: 2318, icon: '📱' },
-  { name: 'Electrical', items: 1890, icon: '⚡' },
-  { name: 'Furniture', items: 712, icon: '🪑' },
-  { name: 'Beauty', items: 1327, icon: '💄' },
-  { name: 'Women', items: 4922, icon: '👗' },
-  { name: 'Men', items: 1247, icon: '👔' },
-];
+interface CategorySummary {
+  name: string;
+  itemCount: number;
+}
 
-const StockPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { items, status, error } = useSelector((state: RootState) => state.items);
+export default function StockPage() {
+  const [categories, setCategories] = useState<CategorySummary[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchItems());
-    }
-  }, [status, dispatch]);
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/categories');
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const totalItems = categories.reduce((sum, cat) => sum + cat.itemCount, 0);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex-1 px-5 md:px-8 py-6">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-2 mb-6">
           <Link to="/" className="text-blue-500">
-            <ChevronLeft className="h-10 w-10 bg-[#eeeeee]/70 p-2 rounded-lg" />
+            <ChevronLeft className="h-10 w-10 bg-white p-2 rounded-lg" />
           </Link>
         </div>
-        <h1 className="text-2xl font-semibold mb-4">Stock</h1>
 
+        <h1 className="text-2xl font-semibold mb-4">Stock</h1>
+        
         <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search product or item..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg bg-gray-50"
+            className="w-full pl-12 p-4 pr-12 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between mb-6 space-y-4 md:space-y-0 md:space-x-4">
-          <StockSummary label="Total Items" value="16,436" />
-          <StockSummary label="Categories" value="8" valueColor="text-blue-500" />
-        </div>
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="animate-pulse bg-white rounded-2xl p-4 h-24" />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4 mb-8 bg-white rounded-2xl p-4">
+              <div>
+                <h2 className="text-gray-500">Total Items</h2>
+                <p className="text-2xl font-semibold">{totalItems}</p>
+              </div>
+              <div>
+                <h2 className="text-gray-500">Categories</h2>
+                <p className="text-2xl font-semibold text-blue-500">{categories.length}</p>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((category) => (
-            <CategoryCard key={category.name} category={category} />
-          ))}
-        </div>
+            <div className="space-y-4">
+              {categories.map((category) => (
+                <CategoryItem
+                  key={category.name}
+                  categoryName={category.name}
+                  itemQuantity={category.itemCount}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
-};
-
-const StockSummary: React.FC<{ label: string; value: string; valueColor?: string }> = ({ label, value, valueColor = "text-black" }) => {
-  return (
-    <div className="bg-gray-50 rounded-xl p-4 flex-1">
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className={`text-2xl font-semibold ${valueColor}`}>{value}</p>
-    </div>
-  );
-};
-
-const CategoryCard: React.FC<{ category: { name: string; items: number; icon: string } }> = ({ category }) => {
-  return (
-    <Link
-      to={`/stock/${category.name.toLowerCase()}`}
-      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
-    >
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-500">
-          {category.icon}
-        </div>
-        <div>
-          <p className="font-medium">{category.name}</p>
-          <p className="text-sm text-blue-500">{category.items} items</p>
-        </div>
-      </div>
-      <div className="flex items-center text-red-400">
-        <span className="text-sm mr-2">Check Details</span><ChevronRight className="h-4 w-4" />
-      </div>
-    </Link>
-  );
-};
-
-export default StockPage;
+}
 

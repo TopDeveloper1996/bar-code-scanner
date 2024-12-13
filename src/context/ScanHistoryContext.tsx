@@ -5,12 +5,15 @@ export interface ScannedProduct {
   title: string;
   brand: string;
   image: string;
+  category: string;
+  description: string;
   timestamp: Date;
 }
 
 interface ScanHistoryContextType {
   scanHistory: ScannedProduct[];
-  addToHistory: (product: Omit<ScannedProduct, 'timestamp'>) => void;
+  addToScanHistory: (product: ScannedProduct) => void;
+  clearScanHistory: () => void;
 }
 
 const ScanHistoryContext = createContext<ScanHistoryContextType | undefined>(undefined);
@@ -18,18 +21,20 @@ const ScanHistoryContext = createContext<ScanHistoryContextType | undefined>(und
 export const ScanHistoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [scanHistory, setScanHistory] = useState<ScannedProduct[]>([]);
 
-  const addToHistory = (product: Omit<ScannedProduct, 'timestamp'>) => {
-    setScanHistory(prev => [
-      {
-        ...product,
-        timestamp: new Date(),
-      },
-      ...prev
-    ]);
+  const addToScanHistory = (product: ScannedProduct) => {
+    setScanHistory(prev => [...prev, product]);
+  };
+
+  const clearScanHistory = () => {
+    setScanHistory([]);
   };
 
   return (
-    <ScanHistoryContext.Provider value={{ scanHistory, addToHistory }}>
+    <ScanHistoryContext.Provider value={{ 
+      scanHistory, 
+      addToScanHistory,
+      clearScanHistory 
+    }}>
       {children}
     </ScanHistoryContext.Provider>
   );
