@@ -2,14 +2,60 @@ import React, { useState } from "react";
 import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Plus } from 'lucide-react';
+import { useScanHistory } from '../context/ScanHistoryContext';
+
+interface ProductInfo {
+  title: string;
+  brand: string;
+  image: string;
+  description: string;
+  category: string;
+}
 
 function BarcodeScanPage() {
-  const [data, setData] = useState("No barcode detected");
+  const [data, setData] = useState<string | null>(null);
+  const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { addToHistory } = useScanHistory();
+
+  const resetScanner = () => {
+    setData(null);
+    setProductInfo(null);
+    setIsLoading(false);
+  };
+
+  const handleAddItem = () => {
+    if (productInfo && data) {
+      // Add to scan history
+      addToHistory({
+        barcode: data,
+        title: productInfo.title,
+        brand: productInfo.brand,
+        image: productInfo.image
+      });
+      
+      // Reset scanner for next scan
+      resetScanner();
+    }
+  };
+
+  const fetchProductInfo = async (barcode: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:5000/api/barcodescan?barcode=${barcode}`);
+      if (!response.ok) throw new Error('Failed to fetch product info');
+      
+      const data = await response.json();
+      setProductInfo(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative flex flex-col w-full h-screen bg-white items-center overflow-hidden">
-      {/* <h2 className="text-2xl font-bold mb-4">Barcode Scanner</h2> */}
-
       <Link
         to="/"
         className="absolute top-4 left-4 z-20 p-2"
@@ -20,12 +66,10 @@ function BarcodeScanPage() {
       <div className="relative w-full h-full">
         <BarcodeScannerComponent
           onUpdate={(err, result) => {
-            if (result) {
-              // alert("Detected!!!");
-              setData(result.getText());
-              console.log("Barcode found:", result.getText());
-            } else {
-              console.log('no result', err)
+            if (result && !data) {  // Only process if no barcode is currently detected
+              const barcodeValue = result.getText();
+              setData(barcodeValue);
+              fetchProductInfo(barcodeValue);
             }
           }}
           videoConstraints={{
@@ -53,32 +97,28 @@ function BarcodeScanPage() {
         </div>
       </div>
 
-      {/* <div className="mt-4 text-center">
-        <p className="text-lg">
-          {data === "No barcode detected" ? (
-            <span className="text-gray-500">Position barcode within frame</span>
-          ) : (
-            <span className="text-green-500 font-semibold">Scanned: {data}</span>
-          )}
-        </p>
-      </div> */}
-
       <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm rounded-t-2xl z-10">
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gray-100 rounded-lg">
               <img
-                src="watch.png"
+                src={productInfo?.image || "watch.png"}
                 alt="Product thumbnail"
                 className="w-full h-full object-cover rounded-lg"
               />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Arnotts</p>
-              <h3 className="font-medium">{ data === 'No barcode detected' ? 'Scanning...' : data }</h3>
+              <p className="text-sm text-gray-500">{productInfo?.brand || 'Scanning...'}</p>
+              <h3 className="font-medium">
+                {isLoading ? 'Loading...' : (productInfo?.title || 'Scan a barcode')}
+              </h3>
             </div>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full">
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50"
+            onClick={handleAddItem}
+            disabled={!productInfo}
+          >
             <Plus className="h-4 w-4" />
             <span className="sr-only">Add item</span>
           </button>

@@ -1,36 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus, ChevronLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const recentScans = [
-  {
-    id: 1,
-    name: 'Silk Sundress',
-    itemRef: 'PT234-C5878-5',
-    stock: 115,
-    image: '/watch.png',
-    quantity: 1,
-    brand: 'Arnotts'
-  },
-  {
-    id: 2,
-    name: 'Smart Goggles',
-    itemRef: 'E46-T68',
-    stock: 35,
-    image: '/watch.png',
-    quantity: 1,
-    brand: 'Arnotts'
-  },
-  {
-    id: 3,
-    name: 'Chandelier',
-    itemRef: '10744D-5642Z',
-    stock: 5,
-    image: '/watch.png',
-    quantity: 1,
-    brand: 'Arnotts'
-  }
-];
+import { useScanHistory } from '../context/ScanHistoryContext';
 
 const UpdateModal: React.FC<{ isOpen: boolean; onClose: () => void; count: number }> = ({ 
   isOpen, 
@@ -93,6 +64,7 @@ const UpdateModal: React.FC<{ isOpen: boolean; onClose: () => void; count: numbe
 
 const HistoryPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { scanHistory } = useScanHistory();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -104,8 +76,8 @@ const HistoryPage: React.FC = () => {
         </div>
         <h1 className="text-2xl font-semibold mb-4">Recent Scans</h1>
         <div className="space-y-4 mb-8">
-          {recentScans.map((item) => (
-            <ScannedItem key={item.id} item={item} />
+          {scanHistory.map((item) => (
+            <ScannedItem key={item.barcode + item.timestamp.toISOString()} item={item} />
           ))}
         </div>
 
