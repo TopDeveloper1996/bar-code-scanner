@@ -171,12 +171,17 @@ const ElectricalStockList: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <EditStock
-              productTitle={selectedItem.name}
-              itemRef={selectedItem.itemRef}
-              sku={selectedItem.sku}
-              itemsInStock={selectedItem.quantity}
-              lastEdit={selectedItem.lastEdit}
-              image={selectedItem.image}
+              barcode={selectedItem.itemRef}
+              initialData={{
+                title: selectedItem.name,
+                barcode: selectedItem.itemRef,
+                quantity: selectedItem.quantity,
+                brand: selectedItem.brand,
+                category: "Electrical",
+                last_edit: selectedItem.lastEdit,
+                image: selectedItem.image
+              }}
+              onClose={handleClose}
               onSave={handleClose}
             />
           </div>

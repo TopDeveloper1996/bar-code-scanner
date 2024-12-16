@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Barcode, Edit2 } from 'lucide-react';
 import EditStock from './EditStock';
+import { config } from '../config';
 
 interface StockItemProps {
   barcode: string;
@@ -23,7 +24,7 @@ export default function StockItem({ barcode }: StockItemProps) {
 
   const fetchItemInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/item_info/${barcode}`);
+      const response = await fetch(`${config.apiUrl}/api/item_info/${barcode}`);
       if (!response.ok) throw new Error('Failed to fetch item info');
       const data = await response.json();
       setItemInfo(data);

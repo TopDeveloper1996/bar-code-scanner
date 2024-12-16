@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Minus, ChevronLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useScanHistory } from '../context/ScanHistoryContext';
-import { ScannedProduct } from '../context/ScanHistoryContext';
+import { config } from '../config';
+// import { ScannedProduct } from '../context/ScanHistoryContext';
 
 interface ProductInfo {
   barcode: string;
@@ -135,7 +136,7 @@ export default function HistoryPage() {
           };
         });
 
-        const response = await fetch(`http://localhost:5000/api/scanned_products_info`, {
+        const response = await fetch(`${config.apiUrl}/api/scanned_products_info`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 

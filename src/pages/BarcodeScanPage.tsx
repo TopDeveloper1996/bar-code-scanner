@@ -3,6 +3,7 @@ import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Plus } from 'lucide-react';
 import { useScanHistory } from '../context/ScanHistoryContext';
+import { config } from '../config';
 
 interface ProductInfo {
   title: string;
@@ -45,7 +46,7 @@ function BarcodeScanPage() {
   const fetchProductInfo = async (barcode: string) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:5000/api/barcodescan?barcode=${barcode}`);
+      const response = await fetch(`${config.apiUrl}/api/barcodescan?barcode=${barcode}`);
       if (!response.ok) throw new Error('Failed to fetch product info');
       
       const data = await response.json();
@@ -73,6 +74,8 @@ function BarcodeScanPage() {
               const barcodeValue = result.getText();
               setData(barcodeValue);
               fetchProductInfo(barcodeValue);
+            } else {
+              console.log("No barcode detected", err);
             }
           }}
           videoConstraints={{

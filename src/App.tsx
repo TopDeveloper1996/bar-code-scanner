@@ -9,7 +9,7 @@ import HistoryPage from './pages/HistoryPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ExportPage from './pages/ExportPage';
 import BarcodeScanPage from './pages/BarcodeScanPage'
-import ElectricalStockList from './components/ElectricalStockList';
+// import ElectricalStockList from './components/ElectricalStockList';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { ScanHistoryProvider } from './context/ScanHistoryContext';
