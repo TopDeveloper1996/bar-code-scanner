@@ -1,5 +1,6 @@
 from supabase import create_client
-from config import Config
+# from config import Config
+from ...config import Config
 
 # Create a single supabase client instance
 supabase = create_client(Config.SUPABASE_URL, Config.SUPABASE_KEY) 
