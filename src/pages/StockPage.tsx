@@ -78,6 +78,7 @@ export default function StockPage() {
               {categories.map((category) => (
                 <CategoryItem
                   key={category.name}
+                  originalCategoryName={category.name}
                   categoryName={category.name}
                   itemQuantity={category.itemCount}
                 />

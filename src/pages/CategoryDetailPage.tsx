@@ -90,6 +90,7 @@ export default function CategoryDetailPage() {
           {categoryInfo?.categories.map((subCategory) => (
             <CategoryItem
               key={subCategory.categoryName}
+              originalCategoryName={subCategory.categoryName}
               categoryName={subCategory.categoryName.split('>').pop() || ''}
               itemQuantity={subCategory.sumQuantity}
             />

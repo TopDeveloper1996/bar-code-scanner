@@ -72,24 +72,24 @@ export default function EditStock({ barcode, initialData, onClose, onSave }: Edi
 
       {/* Bottom Drawer */}
       <div 
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl transition-transform duration-300 ease-out transform ${
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[60px] transition-transform duration-300 ease-out transform ${
           isAnimating ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
         {/* Handle bar */}
-        <div className="flex justify-center pt-3 pb-2">
+        {/* <div className="flex justify-center pt-3 pb-2">
           <div className="w-12 h-1.5 bg-gray-300 rounded-full"/>
-        </div>
+        </div> */}
 
-        <form onSubmit={handleSubmit} className="max-h-[85vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="max-h-[85vh] overflow-y-auto rounded-t-[60px]">
           {/* Close button */}
-          <button 
+          {/* <button 
             type="button"
             onClick={handleClose}
             className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
           >
             <X className="h-6 w-6" />
-          </button>
+          </button> */}
 
           {/* Image Section */}
           <div className="relative h-40 bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">

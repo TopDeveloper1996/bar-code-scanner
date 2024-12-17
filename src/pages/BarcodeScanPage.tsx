@@ -59,7 +59,7 @@ function BarcodeScanPage() {
   };
 
   return (
-    <div className="relative flex flex-col w-full h-screen bg-white items-center overflow-hidden">
+    <div className="relative flex flex-col w-full min-h-screen bg-white items-center overflow-hidden">
       <Link
         to="/"
         className="absolute top-4 left-4 z-20 p-2"
@@ -73,6 +73,7 @@ function BarcodeScanPage() {
             onUpdate={(err, result) => {
               if (result && !data) {
                 const barcodeValue = result.getText();
+                console.log('Barcode Detected', barcodeValue);
                 setData(barcodeValue);
                 fetchProductInfo(barcodeValue);
               } else {
@@ -81,9 +82,8 @@ function BarcodeScanPage() {
             }}
             videoConstraints={{
               facingMode: "environment",
-              width: { ideal: window.innerWidth },
-              height: { ideal: window.innerHeight },
-              aspectRatio: window.innerWidth / window.innerHeight
+              // width: { ideal: window.innerWidth },
+              // height: { ideal: window.innerHeight },
             }}
             torch={false}
             delay={100}

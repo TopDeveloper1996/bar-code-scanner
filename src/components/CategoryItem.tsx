@@ -2,15 +2,15 @@ import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface CategoryItemProps {
+  originalCategoryName: string;
   categoryName: string;
   itemQuantity: number;
 }
 
-export default function CategoryItem({ categoryName, itemQuantity }: CategoryItemProps) {
+export default function CategoryItem({ originalCategoryName, categoryName, itemQuantity }: CategoryItemProps) {
   const navigate = useNavigate();
-
   const handleCheckDetails = () => {
-    navigate(`/stock/${encodeURIComponent(categoryName)}`);
+    navigate(`/stock/${encodeURIComponent(originalCategoryName)}`);
   };
 
   return (
