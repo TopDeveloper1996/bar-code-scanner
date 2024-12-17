@@ -375,12 +375,13 @@ def get_categories():
         # Get all items from stock table
         response = supabase.table('stock').select('category,quantity').execute()
         if not response.data:
+            print("No data returned from Supabase")  # For debugging
             return jsonify([])
 
         # Process categories
         category_counts = {}
         for item in response.data:
-            category = item.get('category', '').split('>')[0]  # Get top-level category
+            category = item.get('category', '').split('>')[0]
             if category:
                 if category not in category_counts:
                     category_counts[category] = {
@@ -391,7 +392,7 @@ def get_categories():
 
         return jsonify(list(category_counts.values()))
     except Exception as e:
-        print(f"Error fetching categories: {str(e)}")
+        print(f"Error fetching categories: {str(e)}")  # For debugging
         return jsonify({'error': str(e)}), 500
 
 @bp.route('/stock/update/<barcode>', methods=['PUT'])

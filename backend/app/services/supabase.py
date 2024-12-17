@@ -1,14 +1,24 @@
 from supabase import create_client
 from config import Config
+import os
 
-# Create a single supabase client instance
-supabase = create_client(Config.SUPABASE_URL, Config.SUPABASE_KEY) 
+def get_supabase_client():
+    url = os.getenv('SUPABASE_URL')
+    key = os.getenv('SUPABASE_KEY')
+    
+    if not url or not key:
+        print(f"Supabase URL: {url}")  # For debugging
+        print(f"Supabase Key length: {len(key) if key else 'None'}")  # For debugging
+        raise ValueError("Supabase URL and Key must be provided")
+        
+    return create_client(url, key)
+
+supabase = get_supabase_client()
 
 def get_products_info(barcodes):
     try:
         response = supabase.table('stock').select('*').in_('barcode', barcodes).execute()
         
-        # Transform the response to match the expected format
         products = []
         for item in response.data:
             products.append({
