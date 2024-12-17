@@ -1,3 +1,7 @@
+const isProd = import.meta.env.MODE === 'production';
+
 export const config = {
-  apiUrl: import.meta.env.VITE_API_URL
+  apiUrl: isProd 
+    ? 'https://bls.unitopsmedia.com'
+    : 'http://localhost:5000'
 } as const; 

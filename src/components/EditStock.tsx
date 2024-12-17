@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Camera, X } from 'lucide-react';
+import { config } from '../config';
 
 interface EditStockProps {
   barcode: string;
@@ -39,7 +40,7 @@ export default function EditStock({ barcode, initialData, onClose, onSave }: Edi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/stock/update/${barcode}`, {
+      const response = await fetch(`${config.apiUrl}/api/stock/update/${barcode}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

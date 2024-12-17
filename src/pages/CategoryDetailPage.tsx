@@ -3,6 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import CategoryItem from '../components/CategoryItem';
 import StockItem from '../components/StockItem';
+import { config } from '../config';
 
 interface CategoryInfo {
   categories: {
@@ -24,7 +25,7 @@ export default function CategoryDetailPage() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch(`http://localhost:5000/api/category_info/${encodeURIComponent(category!)}`);
+        const response = await fetch(`${config.apiUrl}/api/category_info/${encodeURIComponent(category!)}`);
         if (!response.ok) throw new Error('Failed to fetch category info');
         const data = await response.json();
         setCategoryInfo(data);

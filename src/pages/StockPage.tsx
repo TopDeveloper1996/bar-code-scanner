@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CategoryItem from '../components/CategoryItem';
+import { config } from '../config/index';
 
 interface CategorySummary {
   name: string;
@@ -16,7 +17,7 @@ export default function StockPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/categories');
+        const response = await fetch(`${config.apiUrl}/api/categories`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         setCategories(data);
