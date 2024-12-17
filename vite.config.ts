@@ -15,7 +15,13 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false
         }
-      } : undefined
+      } : {
+        '/api': {
+          target: 'https://bls.unitopsmedia.com',
+          changeOrigin: true,
+          secure: false
+        }
+      }
     }
   }
 })
