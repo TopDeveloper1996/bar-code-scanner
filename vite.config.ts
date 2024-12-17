@@ -7,6 +7,15 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL)
+    },
+    server: {
+      proxy: mode === 'development' ? {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+          secure: false
+        }
+      } : undefined
     }
   }
 })

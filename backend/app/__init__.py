@@ -18,8 +18,17 @@ def create_app(config_class=Config):
     
     app.config.from_object(config_class)
     
-    # Enable CORS
-    CORS(app)
+    # Configure CORS
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173",  # Development
+                "https://bls.unitopsmedia.com"  # Production
+            ],
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     
     # Register blueprints
     from app.routes.api import bp as api_bp

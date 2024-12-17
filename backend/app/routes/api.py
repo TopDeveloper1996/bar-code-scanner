@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from app.services.supabase import get_products_info, supabase
 from werkzeug.exceptions import BadRequest, Unauthorized
 import requests
+from flask_cors import cross_origin
 
 bp = Blueprint('api', __name__)
 
@@ -364,8 +365,12 @@ def get_category_info(category):
         print(f"Error fetching category info: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@bp.route('/categories', methods=['GET'])
+@bp.route('/categories', methods=['GET', 'OPTIONS'])
+@cross_origin()
 def get_categories():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'})
+        
     try:
         # Get all items from stock table
         response = supabase.table('stock').select('category,quantity').execute()
