@@ -68,24 +68,27 @@ function BarcodeScanPage() {
       </Link>
 
       <div className="relative w-full h-full">
-        <BarcodeScannerComponent
-          onUpdate={(err, result) => {
-            if (result && !data) {  // Only process if no barcode is currently detected
-              const barcodeValue = result.getText();
-              setData(barcodeValue);
-              fetchProductInfo(barcodeValue);
-            } else {
-              console.log("No barcode detected", err);
-            }
-          }}
-          videoConstraints={{
-            facingMode: "environment",
-            frameRate: { ideal: 30 },
-            aspectRatio: 3/5 
-          }}
-          torch={false}
-          delay={100}
-        />
+        <div style={{ width: '100%', height: '100%' }}>
+          <BarcodeScannerComponent
+            onUpdate={(err, result) => {
+              if (result && !data) {
+                const barcodeValue = result.getText();
+                setData(barcodeValue);
+                fetchProductInfo(barcodeValue);
+              } else {
+                console.log("No barcode detected");
+              }
+            }}
+            videoConstraints={{
+              facingMode: "environment",
+              width: { ideal: window.innerWidth },
+              height: { ideal: window.innerHeight },
+              aspectRatio: window.innerWidth / window.innerHeight
+            }}
+            torch={false}
+            delay={100}
+          />
+        </div>
 
         {/* Scanning frame overlay */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
