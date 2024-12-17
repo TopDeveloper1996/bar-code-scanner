@@ -108,7 +108,7 @@ function BarcodeScanPage() {
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gray-100 rounded-lg">
               <img
-                src={productInfo?.image || "watch.png"}
+                src={productInfo?.image || "/watch.png"}
                 alt="Product thumbnail"
                 className="w-full h-full object-cover rounded-lg"
               />
