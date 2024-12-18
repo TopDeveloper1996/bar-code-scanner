@@ -17,3 +17,9 @@
 .animate-bg-scan {
   animation: bg-scan 3s linear infinite;
 }
+
+video {
+  width: 100vw;
+  height: 100vh; 
+  object-fit: cover;
+}

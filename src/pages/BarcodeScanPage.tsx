@@ -37,7 +37,7 @@ function BarcodeScanPage() {
         description: productInfo.description,
         timestamp: new Date()
       });
-      
+
       // Reset scanner for next scan
       resetScanner();
     }
@@ -48,7 +48,7 @@ function BarcodeScanPage() {
       setIsLoading(true);
       const response = await fetch(`${config.apiUrl}/api/barcodescan?barcode=${barcode}`);
       if (!response.ok) throw new Error('Failed to fetch product info');
-      
+
       const data = await response.json();
       setProductInfo(data);
     } catch (error) {
@@ -59,7 +59,7 @@ function BarcodeScanPage() {
   };
 
   return (
-    <div className="relative flex flex-col w-full min-h-screen bg-white items-center overflow-hidden">
+    <div className="relative flex flex-col w-full h-screen bg-white items-center overflow-hidden">
       <Link
         to="/"
         className="absolute top-4 left-4 z-20 p-2"
@@ -68,27 +68,29 @@ function BarcodeScanPage() {
       </Link>
 
       <div className="relative w-full h-full">
-        <div style={{ width: '100%', height: '100%' }}>
-          <BarcodeScannerComponent
-            onUpdate={(err, result) => {
-              if (result && !data) {
-                const barcodeValue = result.getText();
-                console.log('Barcode Detected', barcodeValue);
-                setData(barcodeValue);
-                fetchProductInfo(barcodeValue);
-              } else {
-                console.log("No barcode detected");
-              }
-            }}
-            videoConstraints={{
-              facingMode: "environment",
-              // width: { ideal: window.innerWidth },
-              // height: { ideal: window.innerHeight },
-            }}
-            torch={false}
-            delay={100}
-          />
-        </div>
+        <BarcodeScannerComponent
+          onUpdate={(err, result) => {
+            if (result && !data) {
+              const barcodeValue = result.getText();
+              console.log('Barcode Detected', barcodeValue);
+              setData(barcodeValue);
+              fetchProductInfo(barcodeValue);
+            } else {
+              console.log("No barcode detected");
+            }
+          }}
+          videoConstraints={{
+            facingMode: "environment",
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            aspectRatio: 4 / 3
+          }}
+          torch={false}
+          delay={500}
+        />
+        {/* <div style={{ width: '100%', height: '100%' }}>
+        
+        </div> */}
 
         {/* Scanning frame overlay */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -123,7 +125,7 @@ function BarcodeScanPage() {
               </h3>
             </div>
           </div>
-          <button 
+          <button
             className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50 disabled:bg-blue-500 disabled:cursor-not-allowed"
             onClick={handleAddItem}
             disabled={!productInfo}
