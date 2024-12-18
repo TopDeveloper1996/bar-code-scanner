@@ -12,7 +12,7 @@ def create_app(config_class=Config):
     def serve_react():
         return render_template('index.html')
 
-    @app.route('/static/<path:path>')
+    @app.route('/<path:path>')
     def serve_static(path):
         return send_from_directory('static', path)
     

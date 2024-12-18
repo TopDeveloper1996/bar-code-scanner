@@ -12,12 +12,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-white">
+      {showSidebar && <Sidebar />}
       <main className="flex-1 flex flex-col">
         <div className={`flex-1 overflow-y-auto ${showSidebar ? 'pb-16' : ''}`}>
           {children}
         </div>
       </main>
-      {showSidebar && <Sidebar />}
     </div>
   );
 };
