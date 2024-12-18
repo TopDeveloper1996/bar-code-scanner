@@ -72,6 +72,7 @@ function BarcodeScanPage() {
           onUpdate={(err, result) => {
             if (result && !data) {
               const barcodeValue = result.getText();
+              alert(barcodeValue);
               console.log('Barcode Detected', barcodeValue);
               setData(barcodeValue);
               fetchProductInfo(barcodeValue);
