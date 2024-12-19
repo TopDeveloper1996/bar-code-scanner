@@ -74,7 +74,6 @@ function BarcodeScanPage() {
               if (barcodeValue) {
                 setData(barcodeValue);
                 fetchProductInfo(barcodeValue);
-                Quagga.stop();
               }
             }
           });
@@ -97,7 +96,6 @@ function BarcodeScanPage() {
     setData(null);
     setProductInfo(null);
     setIsLoading(false);
-    Quagga.start();
   };
 
   const handleAddItem = () => {
@@ -130,7 +128,6 @@ function BarcodeScanPage() {
       console.error('Error fetching product:', error);
     } finally {
       setIsLoading(false);
-      resetScanner();
     }
   };
 

@@ -164,34 +164,34 @@ def barcode_scan():
             'Content-Type': 'application/json'
         }
         
-        api_url = f"https://api.barcodelookup.com/v3/products?barcode={barcode}&key={api_key}"
+        # api_url = f"https://api.barcodelookup.com/v3/products?barcode={barcode}&key={api_key}"
         
-        response = requests.get(api_url, headers=headers)
-        response.raise_for_status()
+        # response = requests.get(api_url, headers=headers)
+        # response.raise_for_status()
         
-        data = response.json()
+        # data = response.json()
         
         # Extract relevant information
-        if data.get('products'):
-            product = data['products'][0]  # Get first match
-            return jsonify({
-                'title': product.get('title', 'Unknown Product'),
-                'brand': product.get('brand', 'Unknown Brand'),
-                'image': product.get('images', '')[0],
-                'description': product.get('description', ''),
-                'category': product.get('category', 'General')
-            })
-        
-        return jsonify({
-            'message': 'Product not found'
-        }), 404
-        # return jsonify({
-        #         'title': f'{barcode}',
-        #         'brand': 'Apple Brand',
-        #         'image': 'watch.png',
-        #         'description': '',
-        #         'category': ''
+        # if data.get('products'):
+        #     product = data['products'][0]  # Get first match
+        #     return jsonify({
+        #         'title': product.get('title', 'Unknown Product'),
+        #         'brand': product.get('brand', 'Unknown Brand'),
+        #         'image': product.get('images', '')[0],
+        #         'description': product.get('description', ''),
+        #         'category': product.get('category', 'General')
         #     })
+        
+        # return jsonify({
+        #     'message': 'Product not found'
+        # }), 404
+        return jsonify({
+                'title': f'{barcode}',
+                'brand': 'Apple Brand',
+                'image': 'watch.png',
+                'description': '',
+                'category': ''
+            })
         
     except requests.RequestException as e:
         return jsonify({
