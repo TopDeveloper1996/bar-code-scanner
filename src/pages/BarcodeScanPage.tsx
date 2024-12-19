@@ -1,5 +1,5 @@
-import { useState } from "react";
-import BarcodeScannerComponent from "react-qr-barcode-scanner";
+import { useState, useEffect, useRef } from "react";
+import Quagga from '@ericblade/quagga2';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Plus } from 'lucide-react';
 import { useScanHistory } from '../context/ScanHistoryContext';
@@ -18,11 +18,86 @@ function BarcodeScanPage() {
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { addToScanHistory } = useScanHistory();
+  const scannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const startScanner = async () => {
+      if (scannerRef.current) {
+        try {
+          await Quagga.init({
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: scannerRef.current,
+              constraints: {
+                facingMode: "environment",
+                width: { min: 640, ideal: 1280 },
+                height: { min: 480, ideal: 720 },
+                aspectRatio: { ideal: 16 / 9 }
+              },
+              area: {
+                top: "20%",
+                right: "10%",
+                left: "10%",
+                bottom: "20%"
+              }
+            },
+            decoder: {
+              readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader", "upc_e_reader"]
+            },
+            locate: true,
+            // debug: {
+            //   showCanvas: true,
+            //   showPatters: true,
+            //   showFrequency: true,
+            //   drawBoundingBox: true,
+            //   showPattern: true,
+            //   showResult: true,
+            //   showLandmarker: true,
+            // }
+          }, (err) => {
+            if (err) {
+              console.error("Quagga initialization error:", err);
+              return;
+            }
+            console.log("Quagga initialized successfully");
+            Quagga.start();
+          });
+
+          Quagga.onDetected((result) => {
+            if (mounted) {
+              const barcodeValue = result.codeResult.code;
+              // alert(barcodeValue);
+              console.log('Barcode Detected', barcodeValue);
+              if (barcodeValue) {
+                setData(barcodeValue);
+                fetchProductInfo(barcodeValue);
+                Quagga.stop();
+              }
+            }
+          });
+        } catch (error) {
+          console.error("Error starting scanner:", error);
+        }
+      }
+    };
+
+    const timeoutId = setTimeout(startScanner, 100);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timeoutId);
+      Quagga.stop();
+    };
+  }, []);
 
   const resetScanner = () => {
     setData(null);
     setProductInfo(null);
     setIsLoading(false);
+    Quagga.start();
   };
 
   const handleAddItem = () => {
@@ -55,6 +130,7 @@ function BarcodeScanPage() {
       console.error('Error fetching product:', error);
     } finally {
       setIsLoading(false);
+      resetScanner();
     }
   };
 
@@ -67,39 +143,13 @@ function BarcodeScanPage() {
         <ChevronLeft className="h-10 w-10 bg-[#fff]/80 p-2 text-blue-500 rounded-lg" />
       </Link>
 
-      <div className="relative w-full h-full">
-        <BarcodeScannerComponent
-          onUpdate={(err, result) => {
-            if (result && !data) {
-              const barcodeValue = result.getText();
-              alert(barcodeValue);
-              console.log('Barcode Detected', barcodeValue);
-              setData(barcodeValue);
-              fetchProductInfo(barcodeValue);
-            } else {
-              console.log("No barcode detected");
-            }
-          }}
-          videoConstraints={{
-            facingMode: "environment",
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            aspectRatio: 4 / 3
-          }}
-          torch={false}
-          delay={500}
-        />
-        {/* <div style={{ width: '100%', height: '100%' }}>
-        
-        </div> */}
+      <div className="absolute inset-0 w-full h-full" ref={scannerRef}>
 
         {/* Scanning frame overlay */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-72 h-96">
             {/* Center guide */}
-            <div className="absolute inset-0 border-2 border-none border-b-4 bg-gradient-to-b from-white/10 to-white/60 rounded-t-3xl animate-bg-scan">
-              {/* <div className="absolute left-0 right-0 h-0.5 bg-red-500 top-1/2 transform -translate-y-1/2 animate-scan" /> */}
-            </div>
+            <div className="absolute inset-0 border-2 border-none border-b-4 bg-gradient-to-b from-white/10 to-white/60 rounded-t-3xl animate-bg-scan" />
             {/* Corner markers */}
             <div className="absolute top-0 left-0 w-20 h-20 border-t-4 border-l-4 border-blue-500 rounded-tl-3xl" />
             <div className="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-blue-500 rounded-tr-3xl" />
@@ -107,6 +157,20 @@ function BarcodeScanPage() {
             <div className="absolute bottom-0 right-0 w-20 h-20 border-b-4 border-r-4 border-blue-500 rounded-br-3xl" />
           </div>
         </div>
+        {/* Overlay for detection area */}
+        {/* <div
+          style={{
+            position: 'absolute',
+            top: '20%',
+            left: '10%',
+            right: '10%',
+            bottom: '20%',
+            borderWidth: '2px',
+            borderColor: 'red',
+            borderStyle: 'dashed',
+            pointerEvents: 'none' // Prevent interaction with this overlay
+          }}
+        /> */}
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm rounded-t-2xl z-10">
